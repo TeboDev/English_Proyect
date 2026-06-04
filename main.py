@@ -51,19 +51,40 @@ if not BOT_TOKEN:
 #  (must run inside the event loop — use post_init / post_shutdown)
 # ──────────────────────────────────────────────────
 async def post_init(application: Application) -> None:
-    """Called by PTB after the event loop is running — safe to start AsyncIOScheduler."""
+    """Called by PTB after the event loop is running."""
+    # 1. Start APScheduler
     scheduler = create_scheduler(application.bot)
     scheduler.start()
     application.bot_data["scheduler"] = scheduler
     logger.info("Scheduler started.")
 
+    # 2. Start a dummy web server for Render (Free Tier)
+    # Render Web Services require the app to bind to $PORT within 60 seconds
+    port = int(os.environ.get("PORT", 8080))
+    
+    async def dummy_handler(reader, writer):
+        writer.write(b"HTTP/1.1 200 OK\r\n\r\nBot is running!")
+        await writer.drain()
+        writer.close()
+
+    server = await asyncio.start_server(dummy_handler, '0.0.0.0', port)
+    application.bot_data["dummy_server"] = server
+    asyncio.create_task(server.serve_forever())
+    logger.info(f"Dummy web server listening on port {port} for Render health checks.")
+
 
 async def post_shutdown(application: Application) -> None:
-    """Cleanly stop the scheduler when the bot shuts down."""
+    """Cleanly stop the scheduler and web server when the bot shuts down."""
     scheduler = application.bot_data.get("scheduler")
     if scheduler and scheduler.running:
         scheduler.shutdown(wait=False)
         logger.info("Scheduler stopped.")
+        
+    server = application.bot_data.get("dummy_server")
+    if server:
+        server.close()
+        await server.wait_closed()
+        logger.info("Dummy web server stopped.")
 
 
 # ──────────────────────────────────────────────────
