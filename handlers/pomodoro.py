@@ -15,8 +15,8 @@ import messages as msg
 
 logger = logging.getLogger(__name__)
 
-POMODORO_MINUTES = 25
-BREAK_MINUTES = 5
+POMODORO_MINUTES = 2
+BREAK_MINUTES = 1
 
 # Key for storing active pomodoro tasks per chat
 _ACTIVE_KEY = "pomodoro_tasks"

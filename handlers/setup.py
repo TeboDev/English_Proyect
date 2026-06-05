@@ -42,7 +42,9 @@ async def setup_bedtime(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
         await update.message.reply_text(msg.SETUP_INVALID_TIME, parse_mode="Markdown")
         return SETUP_BEDTIME
 
-    context.user_data["bedtime"] = text
+    match = _TIME_RE.match(text)
+    normalized = f"{int(match.group(1)):02d}:{int(match.group(2)):02d}"
+    context.user_data["bedtime"] = normalized
     await update.message.reply_text(msg.SETUP_ASK_WAKETIME, parse_mode="Markdown")
     return SETUP_WAKETIME
 
@@ -53,8 +55,9 @@ async def setup_waketime(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text(msg.SETUP_INVALID_TIME, parse_mode="Markdown")
         return SETUP_WAKETIME
 
+    match = _TIME_RE.match(text)
+    waketime = f"{int(match.group(1)):02d}:{int(match.group(2)):02d}"
     bedtime = context.user_data.get("bedtime", "22:00")
-    waketime = text
     chat_id = update.effective_chat.id
 
     db.upsert_user(chat_id, bedtime, waketime)

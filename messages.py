@@ -165,14 +165,14 @@ def get_motivational(mood_key: str) -> str:
 # ─────────────────────────────────────────────
 POMODORO_START = (
     "🍅 *Pomodoro Session Started!*\n\n"
-    "Focus mode ON — *25 minutes* of deep work ahead.\n"
+    "Focus mode ON — *2 minutes* of deep work ahead.\n"
     "Put distractions aside and give it your best shot!\n\n"
     "_I'll ping you when it's time to take a break._ ⏱️"
 )
 
 POMODORO_BREAK = (
     "⏸️ *Break Time!*\n\n"
-    "Great work! Take a *5-minute* break:\n"
+    "Great work! Take a *1-minute* break:\n"
     "• Stand up and stretch 🧘\n"
     "• Drink some water 💧\n"
     "• Rest your eyes (look 20 ft away for 20 seconds) 👀\n\n"

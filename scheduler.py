@@ -8,7 +8,7 @@ Jobs:
 """
 
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from telegram import Bot
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def _now_hhmm() -> str:
     """Return current UTC time as HH:MM string."""
-    return datetime.utcnow().strftime("%H:%M")
+    return datetime.now(timezone.utc).strftime("%H:%M")
 
 
 def _subtract_hour(hhmm: str) -> str:
